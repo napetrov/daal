@@ -26,7 +26,7 @@ This document provides answers to frequently asked questions about the Intel(R) 
 >                  ^
 > compilation terminated.
 > ```
-
+123 
 The cause of this problem is absence of the path to [JNI][jni-wiki] headers in compiler's environment. It can be resolved by adding the required paths to the `CPATH` (on Linux\* and MacOS\*) or `INCLUDE` (on Windows\*) environment variable.
 ```
 export CPATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:$CPATH     # for Linux*
