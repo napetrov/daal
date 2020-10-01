@@ -135,7 +135,9 @@ jobs:
     displayName: 'create dpcpp enviroment'
   - script: |
       sudo apt-get install git
-      git clone https://github.com/IntelPython/daal4py.git
+      git clone https://github.com/napetrov/daal4py.git
+      cd daal4py
+      git checkout dev/napetrov_versioning
     displayName: clone daal4py
   - script: |
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
