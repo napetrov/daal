@@ -27,6 +27,14 @@ jobs:
         .ci/scripts/clang-format.sh
       displayName: 'clang-format check'
       failOnStderr: true
+
+- job: 'Copilot scan'
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+    - script: bash <(curl -s https://copilot.blackducksoftware.com/ci/azure/scripts/upload)
+    displayName: 'Copilot scan'
+
 - job: 'LinuxMake'
   timeoutInMinutes: 0
   variables:
