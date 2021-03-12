@@ -33,7 +33,7 @@ jobs:
     vmImage: 'ubuntu-20.04'
   steps:
     - script: bash <(curl -s https://copilot.blackducksoftware.com/ci/azure/scripts/upload)
-    displayName: 'Copilot scan'
+      displayName: 'Copilot scan'
 
 - job: 'LinuxMake'
   timeoutInMinutes: 0
