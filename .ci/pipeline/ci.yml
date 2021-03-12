@@ -35,7 +35,6 @@ jobs:
     - script: bash <(curl -s https://copilot.blackducksoftware.com/ci/azure/scripts/upload)
       displayName: 'Copilot scan'
 
--
 #- job: Windows
 #  timeoutInMinutes: 0
 #  pool:
