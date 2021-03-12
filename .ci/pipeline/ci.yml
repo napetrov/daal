@@ -28,7 +28,7 @@ jobs:
       displayName: 'clang-format check'
       failOnStderr: true
 
-- job: 'Copilot scan'
+- job: 'Copilotscan'
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
