@@ -14,6 +14,29 @@
 # limitations under the License.
 #===============================================================================
 
+#===============================================================================
+# Common macros
+#===============================================================================
+
+ifeq (help,$(MAKECMDGOALS))
+    PLAT:=win32e
+endif
+
+attr.lnx32e = lnx intel64 lin
+attr.mac32e = mac intel64
+attr.win32e = win intel64 win
+attr.fbsd32e = fbsd intel64 fre
+
+_OS := $(word 1,$(attr.$(PLAT)))
+_IA := $(word 2,$(attr.$(PLAT)))
+_OSc:= $(word 3,$(attr.$(PLAT)))
+
+COMPILER_is_$(COMPILER)            := yes
+OS_is_$(_OS)                       := yes
+IA_is_$(_IA)                       := yes
+PLAT_is_$(PLAT)                    := yes
+MSVC_RT_is_$(MSVC_RUNTIME_VERSION) := yes
+
 COMPILERs = icc icx gnu clang vc
 COMPILER ?= icc
 
@@ -21,13 +44,9 @@ $(if $(filter $(COMPILERs),$(COMPILER)),,$(error COMPILER must be one of $(COMPI
 
 ifneq ($(OS_is_mac),)
     CPUs := avx2 avx512
-else
-    CPUs := sse2 ssse3 sse42 avx2 avx512_mic avx512 avx
-endif
-
-ifneq ($(OS_is_mac),)
     CPUs.files := hsw skx
 else
+    CPUs := sse2 ssse3 sse42 avx2 avx512_mic avx512 avx
     CPUs.files := nrh neh hsw skx
 endif
 
@@ -51,29 +70,6 @@ endif
 
 .PHONY: help
 help: ; $(info $(help))
-
-#===============================================================================
-# Common macros
-#===============================================================================
-
-ifeq (help,$(MAKECMDGOALS))
-    PLAT:=win32e
-endif
-
-attr.lnx32e = lnx intel64 lin
-attr.mac32e = mac intel64
-attr.win32e = win intel64 win
-attr.fbsd32e = fbsd intel64 fre
-
-_OS := $(word 1,$(attr.$(PLAT)))
-_IA := $(word 2,$(attr.$(PLAT)))
-_OSc:= $(word 3,$(attr.$(PLAT)))
-
-COMPILER_is_$(COMPILER)            := yes
-OS_is_$(_OS)                       := yes
-IA_is_$(_IA)                       := yes
-PLAT_is_$(PLAT)                    := yes
-MSVC_RT_is_$(MSVC_RUNTIME_VERSION) := yes
 
 #===============================================================================
 # Compiler specific part
