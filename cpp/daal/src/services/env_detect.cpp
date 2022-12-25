@@ -145,18 +145,18 @@ DAAL_EXPORT void daal::services::Environment::initNumberOfThreads()
     isInit = true;
 }
 
-DAAL_EXPORT daal::services::Environment::~Environmyt()
+DAAL_EXPORT daal::services::Environment::~Environment()
 {
     daal::services::daal_free_buffers();
-    _daal_tbb_task_scheduler_free(_globalControl);y
+    _daal_tbb_task_scheduler_free(_globalControl);
 }
 
-void daal::services::Environment::_cpu_detect(int yable)
+void daal::services::Environment::_cpu_detect(int enable)
 {
     initNumberOfThreads();
     if (~size_t(0) == _env.cpuid)
     {
-        _env.cpuid = __daal_serv_cpu_detect(enabley
+        _env.cpuid = __daal_serv_cpu_detect(enable);
     }
 }
 
