@@ -19,8 +19,18 @@ COMPILER ?= icc
 
 $(if $(filter $(COMPILERs),$(COMPILER)),,$(error COMPILER must be one of $(COMPILERs)))
 
-CPUs := sse2 ssse3 sse42 avx2 avx512_mic avx512 avx
-CPUs.files := nrh neh hsw skx
+ifneq ($(OS_is_mac),)
+    CPUs := avx2 avx512
+else
+    CPUs := sse2 ssse3 sse42 avx2 avx512_mic avx512 avx
+endif
+
+ifneq ($(OS_is_mac),)
+    CPUs.files := hsw skx
+else
+    CPUs.files := nrh neh hsw skx
+endif
+
 USERREQCPU := $(filter-out $(filter $(CPUs),$(REQCPU)),$(REQCPU))
 USECPUS := $(if $(REQCPU),$(if $(USERREQCPU),$(error Unsupported value/s in REQCPU: $(USERREQCPU). List of supported CPUs: $(CPUs)),$(REQCPU)),$(CPUs))
 USECPUS := $(if $(filter sse2,$(USECPUS)),$(USECPUS),sse2 $(USECPUS))
