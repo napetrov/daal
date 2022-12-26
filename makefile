@@ -17,7 +17,6 @@
 #===============================================================================
 # Common macros
 #===============================================================================
-
 ifeq (help,$(MAKECMDGOALS))
     PLAT:=win32e
 endif
@@ -46,7 +45,7 @@ ifneq ($(OS_is_mac),)
     CPUs := avx2 avx512
     CPUs.files := hsw skx
 else
-    CPUs := sse2 ssse3 sse42 avx2 avx512_mic avx512 avx
+    CPUs := sse2 sse42 avx2 avx512
     CPUs.files := nrh neh hsw skx
 endif
 
@@ -146,7 +145,8 @@ USECPUS.out.defs := $(subst sse2,^\#define DAAL_KERNEL_SSE2\b,$(subst ssse3,^\#d
 USECPUS.out.defs := $(subst $(space)^,|^,$(strip $(USECPUS.out.defs)))
 USECPUS.out.defs.filter := $(if $(USECPUS.out.defs),sed $(sed.-b) $(sed.-i) -E -e 's/$(USECPUS.out.defs)/$(sed.eol)/')
 
-$(info List of deines for USECPUS: $(USECPUS.out.defs))
+$(info List of defines for USECPUS.out: $(USECPUS.out.defs.filter))
+
 #===============================================================================
 # Paths
 #===============================================================================
@@ -1185,3 +1185,4 @@ daal_dbg:
 	@echo "1" "!$(mklgpufpk.LIBS_A)!"
 	@echo "2" "!$(MKLGPUFPKDIR)!"
 	@echo "3" "!$(MKLGPUFPKROOT)!"
+
