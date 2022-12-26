@@ -67,10 +67,10 @@ case cpuType:                                                                   
     #define DAAL_KERNEL_SSSE3_ONLY_CODE(...)                    __VA_ARGS__
     #define DAAL_KERNEL_SSSE3_CONTAINER(ContainerTemplate, ...) , DAAL_KERNEL_CONTAINER_TEMPL(ContainerTemplate, ssse3, __VA_ARGS__)
     #define DAAL_KERNEL_SSSE3_CONTAINER1(ContainerTemplate, ...) \
-        extern template class DAAL_KERNEL_CONTAINER_TEMPL(ContainerTemplate, sse2, __VA_ARGS__);
+        extern template class DAAL_KERNEL_CONTAINER_TEMPL(ContainerTemplate, ssse3, __VA_ARGS__);
     #define DAAL_KERNEL_SSSE3_CONTAINER_CASE(ContainerTemplate, ...)                              \
     case ssse3:                                                                                   \
-        _cntr = (new DAAL_KERNEL_CONTAINER_TEMPL(ContainerTemplate, sses3, __VA_ARGS__)(daalEnv)); \
+        _cntr = (new DAAL_KERNEL_CONTAINER_TEMPL(ContainerTemplate, sse2, __VA_ARGS__)(daalEnv)); \
         break;
     #define DAAL_KERNEL_SSSE3_CONTAINER_CASE_SYCL(ContainerTemplate, ...)                        \
     case ssse3:                                                                                  \
