@@ -58,6 +58,7 @@ ifneq ($(OS_is_mac),)
 else
     USECPUS := $(if $(filter sse2,$(USECPUS)),$(USECPUS),sse2 $(USECPUS))
 endif
+$(info Selected list of CPUs - USECPUS: $(USECPUS))
 
 MSVC_RUNTIME_VERSIONs = release debug
 MSVC_RUNTIME_VERSION ?= release
@@ -145,6 +146,7 @@ USECPUS.out.defs := $(subst sse2,^\#define DAAL_KERNEL_SSE2\b,$(subst ssse3,^\#d
 USECPUS.out.defs := $(subst $(space)^,|^,$(strip $(USECPUS.out.defs)))
 USECPUS.out.defs.filter := $(if $(USECPUS.out.defs),sed $(sed.-b) $(sed.-i) -E -e 's/$(USECPUS.out.defs)/$(sed.eol)/')
 
+$(info List of deines for USECPUS: $(USECPUS.out.defs))
 #===============================================================================
 # Paths
 #===============================================================================
