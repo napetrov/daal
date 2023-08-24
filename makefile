@@ -883,7 +883,7 @@ $(WORKDIR.lib)/$(daal_jar):                  $(WORKDIR.lib)/$(daal_jar:%.jar=%_j
 	jar cvf $@ -C $(JAVA.tmpdir) .
 
 #----- production of JNI dll
-$(WORKDIR.lib)/$(jni_so): LOPT += $(-fPIC) $(if $(OS_is_win),,/IGNORE:LNK4006)
+$(WORKDIR.lib)/$(jni_so): LOPT += $(-fPIC) $(if $(OS_is_win),/IGNORE:LNK4006,)
 $(WORKDIR.lib)/$(jni_so): LOPT += $(daaldep.rt.thr) $(daaldep.mkl.thr)
 $(JNI.tmpdir)/$(jni_so:%.$y=%_link.txt): $(JNI.objs) $(if $(OS_is_win),$(JNI.tmpdir)/dll.res,) $(WORKDIR.lib)/$(core_a) $(WORKDIR.lib)/$(thr_tbb_a) ; $(WRITE.PREREQS)
 $(WORKDIR.lib)/$(jni_so):                $(JNI.tmpdir)/$(jni_so:%.$y=%_link.txt); $(LINK.DYNAMIC) ; $(LINK.DYNAMIC.POST)
