@@ -50,11 +50,8 @@ There are several options available for installing oneDAL:
     - Intel® oneAPI:
         - Download as Part of the [Intel® oneAPI Base Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onedal.html#gs.8xrue2)
         - Download as the Stand-Alone [Intel® oneAPI Data Analytics Library](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onedal.html#gs.8xrue2)
-    - Anaconda:
-        | Channel | Version |
-        |:-------:|:-------:|
-        | intel | [![Anaconda-Server Intel Badge](https://anaconda.org/intel/dal-devel/badges/version.svg)](https://anaconda.org/intel/dal-devel) |
-        | conda-forge | [![Anaconda-Server Conda-forge Badge](https://anaconda.org/conda-forge/dal-devel/badges/version.svg)](https://anaconda.org/conda-forge/dal-devel) |
+    - conda:
+        - conda-forge - [![Anaconda-Server Conda-forge Badge](https://anaconda.org/conda-forge/dal-devel/badges/version.svg)](https://anaconda.org/conda-forge/dal-devel)
 
     - [NuGet](https://www.nuget.org/packages/inteldal.devel.linux-x64)
 
