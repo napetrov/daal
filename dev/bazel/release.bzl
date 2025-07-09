@@ -82,12 +82,129 @@ def _copy_lib(ctx, prefix):
         dst_files.append(dst_file)
     return dst_files
 
+def _copy_examples(ctx, prefix):
+    examples_prefix = paths.join(prefix, "examples")
+    examples = _collect_default_files(ctx.attr.examples)
+    dst_files = []
+    for example in examples:
+        # Preserve directory structure for examples
+        dst_path = paths.join(examples_prefix, example.basename)
+        dst_file = _copy(ctx, example, dst_path)
+        dst_files.append(dst_file)
+    return dst_files
+
+def _copy_data_files(ctx, prefix):
+    data_prefix = paths.join(prefix, "examples", "data")
+    data_files = _collect_default_files(ctx.attr.data_files)
+    dst_files = []
+    for data_file in data_files:
+        # Preserve directory structure for data files
+        dst_path = paths.join(data_prefix, data_file.basename)
+        dst_file = _copy(ctx, data_file, dst_path)
+        dst_files.append(dst_file)
+    return dst_files
+
+def _copy_env_scripts(ctx, prefix):
+    """Copy environment scripts from deploy/local folder"""
+    env_prefix = paths.join(prefix, "env")
+    env_scripts = _collect_default_files(ctx.attr.env_scripts)
+    dst_files = []
+    for env_script in env_scripts:
+        dst_path = paths.join(env_prefix, env_script.basename)
+        dst_file = _copy(ctx, env_script, dst_path)
+        dst_files.append(dst_file)
+    return dst_files
+
+def _generate_pkgconfig_files(ctx, prefix):
+    """Generate PKG-CONFIG files using the template and Python script logic"""
+    # Read template file
+    template_content = ctx.file.pkgconfig_template.read()
+    
+    # Generate PKG-CONFIG files for different configurations
+    configs = {
+        "dal-static-threading-host": {
+            "libdir": "lib/intel64",
+            "libs": "-L${libdir} -lonedal -lonedal_core -lonedal_thread -lonedal_parameters -ltbb -ltbbmalloc -lpthread -ldl",
+            "opts": "-std=c++17 -Wno-deprecated-declarations -I${includedir}"
+        },
+        "dal-dynamic-threading-host": {
+            "libdir": "lib/intel64",
+            "libs": "-L${libdir} -lonedal -lonedal_core -lonedal_thread -lonedal_parameters -ltbb -ltbbmalloc -lpthread -ldl",
+            "opts": "-std=c++17 -Wno-deprecated-declarations -I${includedir}"
+        }
+    }
+    
+    dst_files = []
+    for config_name, config_data in configs.items():
+        content = template_content.format(**config_data)
+        pc_path = paths.join(prefix, "lib", "pkgconfig", config_name + ".pc")
+        pc_file = ctx.actions.declare_file(pc_path)
+        ctx.actions.write(
+            output = pc_file,
+            content = content,
+        )
+        dst_files.append(pc_file)
+    
+    return dst_files
+
+def _generate_cmake_files(ctx, prefix):
+    """Generate CMake files using templates with variable substitution"""
+    # Read template file
+    template_content = ctx.file.cmake_template.read()
+    
+    # Variable substitutions similar to make system
+    substitutions = {
+        "@DAL_ROOT_REL_PATH@": "../..",
+        "@VERSIONS_SET@": "TRUE",
+        "@DAL_VER_MAJOR_BIN@": "2025",
+        "@DAL_VER_MINOR_BIN@": "8",
+        "@ARCH_DIR_ONEDAL@": "intel64",
+        "@INC_REL_PATH@": "include",
+        "@DLL_REL_PATH@": "lib/intel64"
+    }
+    
+    # Apply substitutions
+    content = template_content
+    for key, value in substitutions.items():
+        content = content.replace(key, value)
+    
+    cmake_path = paths.join(prefix, "lib", "cmake", "oneDAL", "oneDALConfig.cmake")
+    cmake_file = ctx.actions.declare_file(cmake_path)
+    ctx.actions.write(
+        output = cmake_file,
+        content = content,
+    )
+    
+    return cmake_file
+
 def _copy_to_release_impl(ctx):
     extra_toolchain = ctx.toolchains["@onedal//dev/bazel/toolchains:extra"]
     prefix = ctx.attr.name + "/daal/latest"
     files = []
     files += _copy_include(ctx, prefix)
     files += _copy_lib(ctx, prefix)
+    
+    # Copy examples if provided
+    if ctx.attr.examples:
+        files += _copy_examples(ctx, prefix)
+    
+    # Copy data files if provided
+    if ctx.attr.data_files:
+        files += _copy_data_files(ctx, prefix)
+    
+    # Copy environment scripts from deploy/local
+    if ctx.attr.env_scripts:
+        files += _copy_env_scripts(ctx, prefix)
+    
+    # Generate PKG-CONFIG files using template
+    if ctx.file.pkgconfig_template:
+        files += _generate_pkgconfig_files(ctx, prefix)
+    
+    # Generate CMake files using template
+    if ctx.file.cmake_template:
+        cmake_file = _generate_cmake_files(ctx, prefix)
+        files.append(cmake_file)
+    
     return [DefaultInfo(files=depset(files))]
 
 _release = rule(
@@ -97,6 +214,11 @@ _release = rule(
         "include_prefix": attr.string_list(),
         "include_skip_prefix": attr.string_list(),
         "lib": attr.label_list(allow_files=True),
+        "examples": attr.label_list(allow_files=True, default=[]),
+        "data_files": attr.label_list(allow_files=True, default=[]),
+        "env_scripts": attr.label_list(allow_files=True, default=[]),
+        "pkgconfig_template": attr.label(allow_single_file=True, default=None),
+        "cmake_template": attr.label(allow_single_file=True, default=None),
     },
     toolchains = [
         "@onedal//dev/bazel/toolchains:extra"
@@ -130,7 +252,7 @@ headers_filter = rule(
 def release_include(hdrs, skip_prefix="", add_prefix=""):
     return (hdrs, add_prefix, skip_prefix)
 
-def release(name, include, lib):
+def release(name, include, lib, examples=[], data_files=[], env_scripts=[], pkgconfig_template=None, cmake_template=None):
     rule_include = []
     rule_include_prefix = []
     rule_include_skip_prefix = []
@@ -145,4 +267,9 @@ def release(name, include, lib):
         include_prefix = rule_include_prefix,
         include_skip_prefix = rule_include_skip_prefix,
         lib = lib,
+        examples = examples,
+        data_files = data_files,
+        env_scripts = env_scripts,
+        pkgconfig_template = pkgconfig_template,
+        cmake_template = cmake_template,
     )

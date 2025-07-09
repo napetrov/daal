@@ -3,6 +3,38 @@ load("@onedal//dev/bazel:release.bzl",
     "release_include",
 )
 
+# Example source files
+filegroup(
+    name = "examples_cpp",
+    srcs = glob([
+        "examples/daal/cpp/source/**/*.cpp",
+        "examples/daal/cpp/source/**/*.h",
+        "examples/oneapi/cpp/source/**/*.cpp",
+        "examples/oneapi/cpp/source/**/*.hpp",
+        "examples/oneapi/dpc/source/**/*.cpp",
+        "examples/oneapi/dpc/source/**/*.hpp",
+    ]),
+)
+
+# Example data files
+filegroup(
+    name = "examples_data",
+    srcs = glob([
+        "examples/daal/data/**/*.csv",
+        "examples/oneapi/data/**/*.csv",
+    ]),
+)
+
+# Environment scripts
+filegroup(
+    name = "env_scripts",
+    srcs = [
+        "deploy/local/vars_lnx.sh",
+        "deploy/local/vars_mac.sh",
+        "deploy/local/vars_win.bat",
+    ],
+)
+
 release(
     name = "release",
     include = [
@@ -37,4 +69,9 @@ release(
         ],
         "//conditions:default": [],
     }),
+    examples = [":examples_cpp"],
+    data_files = [":examples_data"],
+    env_scripts = [":env_scripts"],
+    pkgconfig_template = "deploy/pkg-config/pkg-config.tpl",
+    cmake_template = "cmake/templates/oneDALConfig.cmake.in",
 )
