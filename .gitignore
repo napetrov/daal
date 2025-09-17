@@ -29,3 +29,7 @@ MODULE.bazel.lock
 # Configurations from file explorers
 .directory
 .DS_Store
+
+# Local analysis and build artefacts
+build/
+dev/wheel_analysis/data/
