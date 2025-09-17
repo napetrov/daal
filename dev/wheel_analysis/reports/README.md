@@ -28,6 +28,18 @@ Cross-library duplication analysis:
 - Consolidation opportunities
 - Architecture recommendations
 
+### 5. [Library Content Deep Dive](library_content_deep_dive.md)
+Detailed breakdown of what's inside each library:
+- libonedal_dpc.so.3: Only 24% is GPU kernels, 52% is host code
+- libonedal_core.so.3: Multiple splitting strategies analyzed
+- Read-only data analysis (math tables, RNG data)
+
+### 6. [Visual Library Breakdown](visual_library_breakdown.md)
+Visual representation of library contents:
+- ASCII diagrams showing size distributions
+- Proposed modular split options
+- Memory footprint comparisons
+
 ## How These Reports Were Generated
 
 1. Run the wheel analysis:
@@ -51,8 +63,10 @@ Cross-library duplication analysis:
 - **Total wheel size**: 417 MiB uncompressed (106 MiB compressed)
 - **Immediate savings**: 44.2 MiB through debug stripping and build opts
 - **Laptop optimization**: CPU-only variant saves 307 MiB (73% reduction)
-- **SYCL kernels**: 70 MiB across 6,683 kernels
+- **SYCL kernels**: 70 MiB across 6,683 kernels (only 24% of libonedal_dpc.so.3)
 - **Symbol duplication**: ~1 MiB between dispatcher and DPC++ library
+- **libonedal_dpc.so.3 breakdown**: 52% host code, 24% device kernels, 24% overhead
+- **libonedal_core.so.3 content**: Tree algorithms (10.3 MiB), services (3.5 MiB), clustering (2.9 MiB)
 
 ## Next Steps
 
