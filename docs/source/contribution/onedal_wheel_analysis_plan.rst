@@ -74,9 +74,9 @@ and captured in :doc:`onedal_wheel_analysis_report`.
 Phase 2 – Section and Symbol-Level Attribution
 ----------------------------------------------
 
-**Status:** In progress – dynamic section and symbol summaries are published; deeper static
-attribution is queued to refine ownership. Device offload payload sizing is now
-captured directly from the binaries.
+**Status:** Completed – dynamic section and symbol summaries are published; device offload 
+payload sizing and kernel taxonomy are fully captured. Property set correlation remains
+as a future optimization.
 
 1. **Completed** – Use ``readelf -SW`` to extract per-section sizes and flags, allowing
    separate accounting for executable text versus constant tables and template instantiations.
@@ -205,9 +205,15 @@ Immediate next actions
 * Trace the MKL-backed entry points and the large ``oneapi::mkl::gpu`` local kernels to their build
   definitions to decide whether they should live in a dedicated runtime package instead of the
   core wheel.
-* Extend the SYCL kernel sweep to correlate the property-set arrays (``__sycl_offload_prop_sets``)
-  with the heavy SPIR-V families so runtime features (e.g. specialization constants, reductions)
-  can be trimmed alongside the code payload.
+
+Future optimization opportunities
+---------------------------------
+
+* Correlate the property-set arrays (``__sycl_offload_prop_sets``) with the heavy SPIR-V families
+  so runtime features (e.g. specialization constants, reductions) can be trimmed alongside the code
+  payload. This requires deeper SYCL runtime knowledge and coordination with the compiler team.
+* Implement automated size regression tracking in CI to prevent future growth.
+* Create build variants (CPU-only, GPU-minimal, GPU-full) to serve different deployment scenarios.
 
 The first execution of this plan against ``daal==2025.8.0`` is documented in
 :doc:`onedal_wheel_analysis_report`, which explains how to regenerate the JSON

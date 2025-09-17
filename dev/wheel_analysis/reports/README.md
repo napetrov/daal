@@ -40,6 +40,18 @@ Visual representation of library contents:
 - Proposed modular split options
 - Memory footprint comparisons
 
+### 7. [PR Response and Next Steps](pr_response_and_next_steps.md)
+Response to PR #78 comments and completion status:
+- Summary of completed SYCL kernel analysis
+- Remaining analysis steps
+- Implementation recommendations
+
+### 8. [Property Set Correlation Approach](property_set_correlation_approach.md)
+Future work documentation:
+- Approach for correlating SYCL property sets with kernels
+- Expected optimization opportunities
+- Implementation challenges and recommendations
+
 ## How These Reports Were Generated
 
 1. Run the wheel analysis:
@@ -56,6 +68,15 @@ Visual representation of library contents:
 3. Generate summary:
    ```bash
    python3 dev/wheel_analysis/render_summary.py --analysis-dir build/wheel_analysis/analysis
+   ```
+
+4. Check for size regression (for CI):
+   ```bash
+   # Save current as baseline
+   python3 dev/wheel_analysis/check_size_regression.py --save-baseline
+   
+   # Check against baseline
+   python3 dev/wheel_analysis/check_size_regression.py --baseline size_baseline.json --max-growth 5%
    ```
 
 ## Key Findings
