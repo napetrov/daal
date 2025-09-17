@@ -299,3 +299,15 @@ and ``sections_summary.json``) can be found under
 ``build/wheel_analysis/analysis`` after running the script. They are ready for
 ingestion into notebooks to extend the analysis towards namespace aggregation,
 visualisations and release-over-release regression tracking.
+
+Additional detailed analysis reports have been generated and can be found in
+``dev/wheel_analysis/reports/``:
+
+- **Executive Action Summary** - Quick wins and immediate optimization opportunities
+- **Detailed Kernel and MKL Analysis** - SYCL kernel breakdown and MKL usage mapping  
+- **Comprehensive Optimization Strategy** - Full implementation roadmap
+- **Symbol Overlap Analysis** - Cross-library duplication findings
+
+These reports provide actionable recommendations for reducing the wheel size,
+with potential savings of 40-60 MiB through immediate optimizations and up to
+307 MiB for laptop users through a CPU-only variant.
