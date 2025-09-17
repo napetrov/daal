@@ -2,51 +2,42 @@
 
 This directory contains analysis reports generated from the oneDAL binary wheel analysis tools.
 
-## Reports
+## Reports (Consolidated)
 
-### 1. [Executive Action Summary](executive_action_summary.md)
-Quick wins and decision guide for immediate actions. Start here for:
-- Immediate savings opportunities (44.2 MiB)
-- Multi-wheel strategy recommendations
-- Priority timeline
+### 1. [CPU Libraries Analysis](cpu_libraries_analysis.md)
+Comprehensive analysis of CPU-only deployment:
+- Total size: 119 MiB (well-optimized)
+- Algorithm distribution and size breakdown
+- MKL integration (statically linked)
+- Optimization opportunities and deployment options
 
-### 2. [Detailed Kernel and MKL Analysis](detailed_kernel_and_mkl_analysis.md)
-Technical deep-dive into SYCL kernels and MKL usage:
-- 6,683 SYCL kernels categorized by type
-- MKL function usage mapped to algorithms
-- Build optimization experiments
+### 2. [GPU Libraries Analysis](gpu_libraries_analysis.md)
+Detailed analysis of GPU deployment:
+- Additional size: 298 MiB (on top of CPU)
+- Critical finding: Only 24% is actual GPU kernels
+- Host code analysis (52% of library)
+- MKL GPU kernel breakdown
+- Immediate wins: 34-44 MiB through build optimizations
 
-### 3. [Comprehensive Optimization Strategy](comprehensive_optimization_strategy.md)
-Full implementation roadmap including:
-- Phased approach with ABI compatibility notes
-- Deployment scenarios (laptop, cloud, HPC)
-- Risk assessment and success metrics
-
-### 4. [Symbol Overlap Analysis](symbol_overlap_analysis.md)
+### 3. [Symbol Overlap Analysis](symbol_overlap_analysis.md)
 Cross-library duplication analysis:
 - 3,260 shared symbols between libraries
 - Consolidation opportunities
 - Architecture recommendations
 
-### 5. [Library Content Deep Dive](library_content_deep_dive.md)
-Detailed breakdown of what's inside each library:
-- libonedal_dpc.so.3: Only 24% is GPU kernels, 52% is host code
-- libonedal_core.so.3: Multiple splitting strategies analyzed
-- Read-only data analysis (math tables, RNG data)
-
-### 6. [Visual Library Breakdown](visual_library_breakdown.md)
-Visual representation of library contents:
-- ASCII diagrams showing size distributions
-- Proposed modular split options
-- Memory footprint comparisons
-
-### 7. [PR Response and Next Steps](pr_response_and_next_steps.md)
+### 4. [PR Response and Next Steps](pr_response_and_next_steps.md)
 Response to PR #78 comments and completion status:
 - Summary of completed SYCL kernel analysis
 - Remaining analysis steps
 - Implementation recommendations
 
-### 8. [Property Set Correlation Approach](property_set_correlation_approach.md)
+### 5. [MKL Usage Summary](mkl_usage_summary.md)
+Analysis of MKL integration:
+- CPU: Optimally integrated (statically linked)
+- GPU: 17.85 MiB of kernels, 4.2 MiB removable verbose/debug
+- No unused MKL routines found
+
+### 6. [Property Set Correlation Approach](property_set_correlation_approach.md)
 Future work documentation:
 - Approach for correlating SYCL property sets with kernels
 - Expected optimization opportunities
@@ -81,19 +72,48 @@ Future work documentation:
 
 ## Key Findings
 
-- **Total wheel size**: 417 MiB uncompressed (106 MiB compressed)
-- **Immediate savings**: 44.2 MiB through debug stripping and build opts
-- **Laptop optimization**: CPU-only variant saves 307 MiB (73% reduction)
-- **SYCL kernels**: 70 MiB across 6,683 kernels (only 24% of libonedal_dpc.so.3)
-- **Symbol duplication**: ~1 MiB between dispatcher and DPC++ library
-- **libonedal_dpc.so.3 breakdown**: 52% host code, 24% device kernels, 24% overhead
-- **libonedal_core.so.3 content**: Tree algorithms (10.3 MiB), services (3.5 MiB), clustering (2.9 MiB)
+### CPU vs GPU Deployments
+- **CPU-only**: 119 MiB (all algorithms, MKL statically linked)
+- **CPU+GPU**: 417 MiB (+298 MiB for GPU support)
+- **GPU library breakdown**: 52% host code, 24% device kernels, 24% overhead
+
+### Optimization Opportunities
+- **Immediate savings**: 34-44 MiB (strip debug, remove MKL verbose, optimize build)
+- **Medium-term**: 25-40 MiB (reduce templates, fix duplicates)
+- **Long-term**: 65-90 MiB (architecture refactoring)
+- **Total potential**: 124-174 MiB reduction for GPU deployment
+
+### MKL Integration
+- **CPU**: MKL statically linked, no external dependencies
+- **GPU**: Additional MKL GPU kernels (17.85 MiB)
+- **Removable**: MKL verbose/debug kernels (4.2 MiB) in GPU library
+
+## Enabling Debug Symbols
+
+### For C++ Users
+```bash
+# Build with debug symbols
+make REQDBG=yes ONEDAL_USE_DPCPP=yes
+
+# Or keep symbols separate
+objcopy --only-keep-debug libonedal_dpc.so.3 libonedal_dpc.so.3.debug
+strip --strip-debug libonedal_dpc.so.3
+```
+
+### For Python Users
+```bash
+# Environment variable (proposed)
+export ONEDAL_ENABLE_DEBUG_SYMBOLS=1
+
+# Or future debug wheel
+pip install daal[debug]
+```
 
 ## Next Steps
 
-1. **Immediate**: Implement debug symbol stripping (30-40 MiB savings)
-2. **Short-term**: Create CPU-only wheel for laptops (110 MiB total size)
-3. **Medium-term**: Optimize SYCL kernel generation (15-20 MiB savings)
-4. **Long-term**: Architecture refactoring for next major release
+1. **Immediate**: Strip debug symbols and remove MKL verbose (38-44 MiB)
+2. **Short-term**: Optimize build flags and templates (35-45 MiB)
+3. **Medium-term**: Create CPU vs CPU+GPU deployment options
+4. **Long-term**: Architecture split for modular deployment
 
-See the individual reports for detailed recommendations and implementation guidance.
+See the individual reports for detailed implementation guidance.
