@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   LinuxMakeDPCPP:
-    if: github.repository == 'uxlfoundation/oneDAL'
+    if: github.repository == 'napetrov/oneDAL'
     strategy:
       fail-fast: false
       matrix:
@@ -129,7 +129,7 @@ jobs:
     name: ABI Conformance(avx2)
     needs: LinuxMakeDPCPP
     if: |
-      github.repository == 'uxlfoundation/oneDAL' &&
+      github.repository == 'napetrov/oneDAL' &&
       github.event_name == 'pull_request' &&
       ! contains(toJson(github.event.pull_request.labels.*.name), '"API/ABI breaking change"')
     runs-on: ubuntu-24.04
@@ -189,7 +189,7 @@ jobs:
     # below -- so a labelled PR still produces the full per-library report, the
     # job summary and the JSON artifact, and merges anyway.
     if: |
-      github.repository == 'uxlfoundation/oneDAL' &&
+      github.repository == 'napetrov/oneDAL' &&
       github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     # Measured with the pin below, on the no-debug-info build LinuxMakeDPCPP
@@ -528,7 +528,7 @@ jobs:
     # (`continue-on-error: true` below), so there is nothing here for a label to
     # relax -- it never blocks a merge to begin with.
     if: |
-      github.repository == 'uxlfoundation/oneDAL' &&
+      github.repository == 'napetrov/oneDAL' &&
       github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     continue-on-error: true

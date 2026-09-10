@@ -88,7 +88,10 @@ env:
 
 jobs:
   PublishBaseline:
-    if: github.repository == 'uxlfoundation/oneDAL'
+    # E2E PROOF BRANCH ONLY -- not for the PR diff. Relaxed so the
+    # publisher actually runs on napetrov/oneDAL, and the digest commit
+    # lands on this throwaway branch instead of the fork's main.
+    if: github.repository == 'napetrov/oneDAL'
     runs-on: ubuntu-24.04
     # Measured against the pin below, on the no-debug-info build this workflow
     # produces: 35.4 s wall and 327 MiB peak RSS for the six binary-depth dumps
@@ -131,7 +134,7 @@ jobs:
       - name: Checkout oneDAL main
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: main
+          ref: abicheck-e2e-proof
 
       - name: Checkout oneDAL sources at the baseline tag
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -418,7 +421,7 @@ jobs:
             exit 0
           fi
           git commit -m "Publish abicheck baseline digest for ${{ steps.baseline.outputs.tag }}"
-          git push origin HEAD:main
+          git push origin HEAD:abicheck-e2e-proof
 
       - name: Summarize
         run: |
