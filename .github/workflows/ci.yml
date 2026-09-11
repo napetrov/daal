@@ -20,6 +20,10 @@ on:
   pull_request:
     branches:
       - main
+      # E2E PROOF BRANCH ONLY -- not for the PR diff. A pull_request event only
+      # fires when the *base* branch matches this filter, so proving the two
+      # abicheck jobs on the fork needs the throwaway base named here.
+      - abicheck-e2e-proof
   push:
     branches:
       - main
