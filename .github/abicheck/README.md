@@ -1078,3 +1078,4 @@ this collapses into two `workflow_call` jobs.
 `ci.yml` and `abicheck-baseline.yml` both point here rather than repeating the
 rationale. If you change the pinned commit, the baseline storage, the policy or the
 shape of the comparison, update this file in the same PR.
+
